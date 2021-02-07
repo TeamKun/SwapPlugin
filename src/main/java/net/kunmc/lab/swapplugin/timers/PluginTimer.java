@@ -11,38 +11,30 @@ import java.util.List;
 import java.util.Vector;
 
 public class PluginTimer extends BukkitRunnable {
-    List<Player> players;
-    Vector<Pair> pairs;
+    private final long startTime; // millisecond
+    private List<Player> players;
+    private int interval; // second
+
+    public PluginTimer(int interval) {
+        startTime = System.currentTimeMillis();
+        this.interval = interval;
+    }
 
     @Override
     public void run() {
+
         players = new ArrayList<>(Bukkit.getOnlinePlayers());
 
         Collections.shuffle(players);
-
-
+        players.forEach(
+                p -> {
+                    p.sendMessage("current time: " + System.currentTimeMillis());
+                }
+        );
     }
 
-    private static class Pair {
-        final private Player a;
-        final private Player b;
-
-        public Pair(Player a, Player b) {
-            this.a = a;
-            this.b = b;
-        }
-
-        public void swap() {
-            Location locA = a.getLocation();
-            Location locB = b.getLocation();
-
-            a.teleport(locB);
-            b.teleport(locA);
-        }
-
-        public void showText() {
-
-        }
+    public void changeInterval(int interval) {
+        this.interval = interval;
     }
 
 }
