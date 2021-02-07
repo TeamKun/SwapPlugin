@@ -8,12 +8,15 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 public class PluginTimer extends BukkitRunnable {
     private long startTime; // ミリ秒
     private int interval; // 周期（秒）
-    private List<Player> players;
+    private List<UUID> players;
 
     public PluginTimer(int interval) {
         if (interval < 0) {
@@ -50,7 +53,7 @@ public class PluginTimer extends BukkitRunnable {
     }
 
     private void init() {
-        players = new ArrayList<>(Bukkit.getOnlinePlayers());
+        players = Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(Collectors.toList());
         Collections.shuffle(players);
         startTime = System.currentTimeMillis();
     }
@@ -58,16 +61,22 @@ public class PluginTimer extends BukkitRunnable {
     private void teleport() {
         Vector<Location> locations = new Vector<>();
 
-        players.forEach(p -> locations.add(p.getLocation()));
+        players.stream().map(Bukkit::getPlayer).filter(Objects::nonNull).forEach(p -> locations.add(p.getLocation()));
 
         for (int i = 0; i < players.size(); i++) {
-            players.get(i).teleport(locations.get(getTargetIndex(i)));
+            Player player = Bukkit.getPlayer(players.get(i));
+            if (player == null)
+                continue;
+            player.teleport(locations.get(getTargetIndex(i)));
         }
     }
 
     private void notice(int remainingTime) {
         for (int i = 0; i < players.size(); i++) {
-            players.get(i).sendMessage("残り" + remainingTime + "秒で" + players.get(getTargetIndex(i)) + "にTPします。");
+            Player player = Bukkit.getPlayer(players.get(i));
+            if (player == null)
+                continue;
+            player.sendMessage("残り" + remainingTime + "秒で" + players.get(getTargetIndex(i)) + "にTPします。");
         }
     }
 
