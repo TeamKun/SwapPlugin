@@ -15,6 +15,7 @@ public class PluginTimer extends BukkitRunnable {
     private long startTime; // ミリ秒
     private int interval; // 周期（秒）
     private List<Player> players;
+    private int prevRemainingTime;
 
     public PluginTimer(int interval) {
         setInterval(interval);
@@ -35,11 +36,15 @@ public class PluginTimer extends BukkitRunnable {
         }
         // 十秒前
         else if (remainingTime < 10) {
+            if (prevRemainingTime == remainingTime) {
+                return;
+            }
             if (players == null) {
                 players = new ArrayList<>(Bukkit.getOnlinePlayers());
                 Collections.shuffle(players);
             }
-            notice(remainingTime);
+            notice(remainingTime + 1);
+            prevRemainingTime = remainingTime;
         }
 
     }
@@ -70,7 +75,7 @@ public class PluginTimer extends BukkitRunnable {
         for (int i = 0; i < players.size(); i++) {
             players.get(i).sendTitle("",
                     "残り" + ChatColor.GOLD + remainingTime + ChatColor.WHITE + "秒で" + ChatColor.GREEN + players.get(getTargetIndex(i)).getName() + ChatColor.WHITE + "にTPします。",
-                    2, 0, 5);
+                    0, 15, 5);
         }
     }
 
