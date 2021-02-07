@@ -16,10 +16,7 @@ public class PluginTimer extends BukkitRunnable {
     private List<Player> players;
 
     public PluginTimer(int interval) {
-        if (interval < 0) {
-            interval = 120;
-        }
-        this.interval = interval;
+        setInterval(interval);
         init();
     }
 
@@ -37,12 +34,16 @@ public class PluginTimer extends BukkitRunnable {
         }
         // 十秒前
         else if (remainingTime < 10) {
+            if (players == null) {
+                players = new ArrayList<>(Bukkit.getOnlinePlayers());
+                Collections.shuffle(players);
+            }
             notice(remainingTime);
         }
 
     }
 
-    public void changeInterval(int interval) {
+    public void setInterval(int interval) {
         if (interval < 0) {
             interval = 120;
         }
@@ -50,9 +51,8 @@ public class PluginTimer extends BukkitRunnable {
     }
 
     private void init() {
-        players = new ArrayList<>(Bukkit.getOnlinePlayers());
-        Collections.shuffle(players);
         startTime = System.currentTimeMillis();
+        players = null;
     }
 
     private void teleport() {
@@ -67,7 +67,9 @@ public class PluginTimer extends BukkitRunnable {
 
     private void notice(int remainingTime) {
         for (int i = 0; i < players.size(); i++) {
-            players.get(i).sendMessage("残り" + remainingTime + "秒で" + players.get(getTargetIndex(i)) + "にTPします。");
+            players.get(i).sendTitle(null,
+                    "残り" + remainingTime + "秒で" + players.get(getTargetIndex(i)).getName() + "にTPします。",
+                    0, 10, 0);
         }
     }
 
