@@ -3,13 +3,14 @@ package net.kunmc.lab.swapplugin.timers;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 public class PluginTimer extends BukkitRunnable {
     private long startTime; // ミリ秒
@@ -30,20 +31,25 @@ public class PluginTimer extends BukkitRunnable {
         int remainingTime = interval - elapsedTime;
 
         // ぽっぽ～( ^)o(^ )
-        if (remainingTime < 0) {
+        if (remainingTime <= 0) {
             teleport();
             init();
+            return;
         }
         // 十秒前
-        else if (remainingTime < 10) {
+        else if (remainingTime <= 10) {
+            if (players == null) {
+                players = Bukkit.getOnlinePlayers().stream().parallel().filter(Player::isOnline).collect(Collectors.toList());
+                Collections.shuffle(players);
+            }
+            notice(remainingTime);
+        }
+
+        if (remainingTime <= 3) {
             if (prevRemainingTime == remainingTime) {
                 return;
             }
-            if (players == null) {
-                players = new ArrayList<>(Bukkit.getOnlinePlayers());
-                Collections.shuffle(players);
-            }
-            notice(remainingTime + 1);
+            players.forEach(p -> p.playSound(p.getLocation(), Sound.BLOCK_BELL_USE, 1.0f, 1.0f));
             prevRemainingTime = remainingTime;
         }
 
@@ -67,24 +73,36 @@ public class PluginTimer extends BukkitRunnable {
         players.forEach(p -> locations.add(p.getLocation()));
 
         for (int i = 0; i < players.size(); i++) {
-            players.get(i).teleport(locations.get(getTargetIndex(i)));
+            Player player = players.get(i);
+
+            player.teleport(locations.get(getNextIndex(i)));
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f);
         }
     }
 
     private void notice(int remainingTime) {
         for (int i = 0; i < players.size(); i++) {
             players.get(i).sendTitle("",
-                    "残り" + ChatColor.GOLD + remainingTime + ChatColor.WHITE + "秒で" + ChatColor.GREEN + players.get(getTargetIndex(i)).getName() + ChatColor.WHITE + "にTPします。",
-                    0, 15, 5);
+                    "残り" + ChatColor.GOLD + remainingTime + ChatColor.WHITE + "秒で" + ChatColor.GREEN + players.get(getNextIndex(i)).getName() + ChatColor.WHITE + "にTPします。",
+                    0, 10, 0);
+            players.get(i).sendActionBar(ChatColor.GREEN + players.get(getPrevIndex(i)).getName() + ChatColor.WHITE + "がTPしてきます。");
         }
     }
 
-    private int getTargetIndex(int index) {
+    private int getNextIndex(int index) {
         if (index + 1 >= players.size()) {
             return 0;
         }
 
         return index + 1;
+    }
+
+    private int getPrevIndex(int index) {
+        if (index == 0) {
+            return players.size() - 1;
+        }
+
+        return index - 1;
     }
 
 }
