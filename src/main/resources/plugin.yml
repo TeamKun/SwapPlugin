@@ -1,0 +1,5 @@
+name: SwapPlugin
+version: ${project.version}
+main: net.kunmc.lab.swapplugin.SwapPlugin
+api-version: 1.15
+authors: [ YukiAt ]
