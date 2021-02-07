@@ -11,16 +11,18 @@ import org.bukkit.command.TabCompleter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SwapCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 0) {
-            return true;
-        }
         if (!sender.hasPermission("swapplugin.swap")) {
             sender.sendMessage(ChatColor.RED + "権限がないお^^");
+            return true;
+        }
+        if (args.length == 0) {
+            sender.sendMessage(ChatColor.RED + "引数が間違ってるンゴね～^^");
             return true;
         }
 
@@ -96,19 +98,28 @@ public class SwapCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length == 1) {
-            return Arrays.asList("start", "interval", "end");
+        List<String> result;
+
+        switch (args.length) {
+            case 1:
+                result = Arrays.asList("start", "interval", "end");
+                break;
+            case 2:
+                switch (args[0].toLowerCase()) {
+                    case "start":
+                    case "interval":
+                        return Collections.singletonList("<interval(数字)>");
+                    default:
+                        return Collections.emptyList();
+                }
+            default:
+                return Collections.emptyList();
         }
 
-        if (args.length == 2) {
-            switch (args[0].toLowerCase()) {
-                case "start":
-                case "interval":
-                    return Collections.singletonList("<interval(数字)>");
-            }
-        }
-
-        return null;
+        String last = args[args.length - 1].toLowerCase();
+        return result.stream()
+                .filter(opt -> opt.startsWith(last))
+                .collect(Collectors.toList());
     }
 
 }
