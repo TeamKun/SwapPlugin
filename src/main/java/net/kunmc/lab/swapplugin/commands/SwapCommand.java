@@ -8,7 +8,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class SwapCommand implements CommandExecutor, TabCompleter {
@@ -57,7 +59,21 @@ public class SwapCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean onInterval(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length == 0) {
+            sender.sendMessage(ChatColor.RED + "引数が違うンゴね～^^　使用方法：/swap interval <interval(数字)>");
+            return true;
+        }
+        if (SwapPlugin.timer == null) {
+            sender.sendMessage(ChatColor.RED + "まだ開始されていません。開始するには「/swap start」と入力してください。");
+            return true;
+        }
 
+        try {
+            SwapPlugin.timer.changeInterval(Integer.parseInt(args[0]));
+        } catch (NumberFormatException e) {
+            sender.sendMessage(ChatColor.RED + "引数が違うンゴね～^^　使用方法：/swap interval <interval(数字)>");
+            return true;
+        }
 
         return true;
     }
@@ -76,6 +92,20 @@ public class SwapCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        System.out.println(args.length);
+
+        if (args.length == 1) {
+            return Arrays.asList("start", "interval", "end");
+        }
+
+        if (args.length == 2) {
+            switch (args[0].toLowerCase()) {
+                case "start":
+                case "interval":
+                    return Collections.singletonList("<interval(数字)>");
+            }
+        }
+
         return null;
     }
 

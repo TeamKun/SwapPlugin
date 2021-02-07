@@ -15,6 +15,9 @@ public class PluginTimer extends BukkitRunnable {
     private int interval; // 周期（秒）
 
     public PluginTimer(int interval) {
+        if (interval < 0) {
+            interval = 120;
+        }
         this.interval = interval;
         init();
     }
@@ -39,6 +42,9 @@ public class PluginTimer extends BukkitRunnable {
     }
 
     public void changeInterval(int interval) {
+        if (interval < 0) {
+            interval = 120;
+        }
         this.interval = interval;
     }
 
