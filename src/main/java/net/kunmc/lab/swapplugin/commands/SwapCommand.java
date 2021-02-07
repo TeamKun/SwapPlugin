@@ -57,7 +57,7 @@ public class SwapCommand implements CommandExecutor, TabCompleter {
         }
 
         SwapPlugin.timer = new PluginTimer(interval);
-        SwapPlugin.timer.runTaskTimer(SwapPlugin.instance, 0, 10);
+        SwapPlugin.timer.runTaskTimer(SwapPlugin.instance, 0, 1);
 
         return true;
     }

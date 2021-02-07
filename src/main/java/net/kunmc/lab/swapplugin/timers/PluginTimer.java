@@ -1,6 +1,7 @@
 package net.kunmc.lab.swapplugin.timers;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -67,9 +68,9 @@ public class PluginTimer extends BukkitRunnable {
 
     private void notice(int remainingTime) {
         for (int i = 0; i < players.size(); i++) {
-            players.get(i).sendTitle(null,
-                    "残り" + remainingTime + "秒で" + players.get(getTargetIndex(i)).getName() + "にTPします。",
-                    0, 10, 0);
+            players.get(i).sendTitle("",
+                    "残り" + ChatColor.GOLD + remainingTime + ChatColor.WHITE + "秒で" + ChatColor.GREEN + players.get(getTargetIndex(i)).getName() + ChatColor.WHITE + "にTPします。",
+                    2, 0, 5);
         }
     }
 
