@@ -33,7 +33,7 @@ public class SwapCommand implements CommandExecutor, TabCompleter {
 
     private boolean onStart(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "引数が違うンゴね～^ ^。使用方法：/swap start <interval(数字)>");
+            sender.sendMessage(ChatColor.RED + "引数が違うンゴね～^^　使用方法：/swap start <interval(数字)>");
             return true;
         }
         if (SwapPlugin.timer != null) {
@@ -46,7 +46,7 @@ public class SwapCommand implements CommandExecutor, TabCompleter {
         try {
             interval = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
-            sender.sendMessage(ChatColor.RED + "引数が違うンゴね～^ ^。使用方法：/swap start <interval(数字)>");
+            sender.sendMessage(ChatColor.RED + "引数が違うンゴね～^^　使用方法：/swap start <interval(数字)>");
             return true;
         }
 

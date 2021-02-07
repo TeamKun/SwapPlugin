@@ -3,3 +3,9 @@ version: ${project.version}
 main: net.kunmc.lab.swapplugin.SwapPlugin
 api-version: 1.15
 authors: [ YukiAt ]
+commands:
+  swap:
+    usage: |
+      /<command> start interval(second)
+      /<command> interval interval(second)
+      /<command> end

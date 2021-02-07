@@ -9,6 +9,7 @@ public final class SwapPlugin extends JavaPlugin {
     public static PluginTimer timer;
 
     @Override
+    @SuppressWarnings("all")
     public void onEnable() {
         instance = this;
 
