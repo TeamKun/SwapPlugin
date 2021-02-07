@@ -21,4 +21,5 @@ public final class SwapPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
     }
+
 }

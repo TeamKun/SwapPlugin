@@ -1,6 +1,7 @@
 package net.kunmc.lab.swapplugin.timers;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -11,8 +12,8 @@ import java.util.Vector;
 
 public class PluginTimer extends BukkitRunnable {
     private long startTime; // ミリ秒
-    private Vector<Pair> pairs;
     private int interval; // 周期（秒）
+    private List<Player> players;
 
     public PluginTimer(int interval) {
         if (interval < 0) {
@@ -31,12 +32,12 @@ public class PluginTimer extends BukkitRunnable {
 
         // ぽっぽ～( ^)o(^ )
         if (remainingTime < 0) {
-            pairs.forEach(Pair::teleport);
+            teleport();
             init();
         }
         // 十秒前
         else if (remainingTime < 10) {
-            pairs.forEach(pair -> pair.notice(remainingTime));
+            notice(remainingTime);
         }
 
     }
@@ -49,45 +50,33 @@ public class PluginTimer extends BukkitRunnable {
     }
 
     private void init() {
-        List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
+        players = new ArrayList<>(Bukkit.getOnlinePlayers());
         Collections.shuffle(players);
-
-        pairs = new Vector<>();
-
-        for (int i = 0; i < players.size(); i++) {
-            Player dst;
-
-            try {
-                dst = players.get(i + 1);
-            } catch (IndexOutOfBoundsException e) {
-                dst = players.get(0);
-            }
-
-            Player src = players.get(i);
-
-            pairs.add(new Pair(src, dst));
-        }
-
         startTime = System.currentTimeMillis();
     }
 
-    private static class Pair {
-        Player src;
-        Player dst;
+    private void teleport() {
+        Vector<Location> locations = new Vector<>();
 
-        Pair(Player src, Player dst) {
-            this.src = src;
-            this.dst = dst;
+        players.forEach(p -> locations.add(p.getLocation()));
+
+        for (int i = 0; i < players.size(); i++) {
+            players.get(i).teleport(locations.get(getTargetIndex(i)));
+        }
+    }
+
+    private void notice(int remainingTime) {
+        for (int i = 0; i < players.size(); i++) {
+            players.get(i).sendMessage("残り" + remainingTime + "秒で" + players.get(getTargetIndex(i)) + "にTPします。");
+        }
+    }
+
+    private int getTargetIndex(int index) {
+        if (index + 1 >= players.size()) {
+            return 0;
         }
 
-        public void teleport() {
-            src.teleport(dst.getLocation());
-        }
-
-        public void notice(int time) {
-            src.sendMessage("残り" + time + "秒で" + dst.getName() + "にTPします。");
-        }
-
+        return index + 1;
     }
 
 }
