@@ -2,6 +2,7 @@ package net.kunmc.lab.swapplugin.commands;
 
 import net.kunmc.lab.swapplugin.SwapPlugin;
 import net.kunmc.lab.swapplugin.timers.PluginTimer;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -58,6 +59,13 @@ public class SwapCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
+        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(
+                ChatColor.GREEN + "==================================================\n" +
+                ChatColor.WHITE + "スワップカウントダウンが開始されました\n" +
+                ChatColor.GOLD + interval + ChatColor.WHITE + "秒後にスワップが実行されるンゴ～\n" +
+                ChatColor.GREEN + "=================================================="
+        ));
+
         SwapPlugin.timer = new PluginTimer(interval);
         SwapPlugin.timer.runTaskTimer(SwapPlugin.instance, 0, 1);
 
@@ -74,12 +82,17 @@ public class SwapCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
+        int interval;
         try {
-            SwapPlugin.timer.setInterval(Integer.parseInt(args[0]));
+            interval = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
             sender.sendMessage(ChatColor.RED + "引数が違うンゴね～^^　使用方法：/swap interval <interval(数字)>");
             return true;
         }
+
+        SwapPlugin.timer.setInterval(interval);
+        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(
+                ChatColor.WHITE + "スワップの間隔が" + ChatColor.GOLD + interval + ChatColor.WHITE + "秒に変更されました"));
 
         return true;
     }

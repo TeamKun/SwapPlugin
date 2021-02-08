@@ -1,9 +1,6 @@
 package net.kunmc.lab.swapplugin.timers;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -39,7 +36,10 @@ public class PluginTimer extends BukkitRunnable {
         // 十秒前
         else if (remainingTime <= 10) {
             if (players == null) {
-                players = Bukkit.getOnlinePlayers().stream().parallel().filter(Player::isOnline).collect(Collectors.toList());
+                players = Bukkit.getOnlinePlayers().stream().parallel()
+                        .filter(p -> p.getGameMode() == GameMode.SURVIVAL)
+                        .filter(p -> !p.isDead())
+                        .collect(Collectors.toList());
                 Collections.shuffle(players);
             }
             notice(remainingTime);
