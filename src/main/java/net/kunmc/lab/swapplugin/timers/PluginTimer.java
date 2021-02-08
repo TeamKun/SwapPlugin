@@ -56,7 +56,7 @@ public class PluginTimer extends BukkitRunnable {
     }
 
     public void setInterval(int interval) {
-        if (interval < 0) {
+        if (interval <= 0) {
             interval = 120;
         }
         this.interval = interval;
