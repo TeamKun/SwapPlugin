@@ -10,9 +10,10 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 public class PluginTimer extends BukkitRunnable {
+    public List<Player> players;
+
     private long startTime; // ミリ秒
     private int interval; // 周期（秒）
-    private List<Player> players;
     private int prevRemainingTime;
 
     public PluginTimer(int interval) {
@@ -33,17 +34,7 @@ public class PluginTimer extends BukkitRunnable {
             init();
             return;
         }
-        // 十秒前
-        else if (remainingTime <= 10) {
-            if (players == null) {
-                players = Bukkit.getOnlinePlayers().stream().parallel()
-                        .filter(p -> p.getGameMode() == GameMode.SURVIVAL)
-                        .filter(p -> !p.isDead())
-                        .collect(Collectors.toList());
-                Collections.shuffle(players);
-            }
-            notice(remainingTime);
-        }
+        notice(remainingTime);
 
         if (remainingTime <= 3) {
             if (prevRemainingTime == remainingTime) {
@@ -60,11 +51,16 @@ public class PluginTimer extends BukkitRunnable {
             interval = 120;
         }
         this.interval = interval;
+        startTime = System.currentTimeMillis();
     }
 
     private void init() {
         startTime = System.currentTimeMillis();
-        players = null;
+        players = Bukkit.getOnlinePlayers().stream().parallel()
+                .filter(p -> p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
+                .filter(p -> !p.isDead())
+                .collect(Collectors.toList());
+        Collections.shuffle(players);
     }
 
     private void teleport() {
@@ -82,10 +78,12 @@ public class PluginTimer extends BukkitRunnable {
 
     private void notice(int remainingTime) {
         for (int i = 0; i < players.size(); i++) {
-            players.get(i).sendTitle("",
-                    "残り" + ChatColor.GOLD + remainingTime + ChatColor.WHITE + "秒で" + ChatColor.GREEN + players.get(getNextIndex(i)).getName() + ChatColor.WHITE + "にTPします。",
-                    0, 10, 0);
-            players.get(i).sendActionBar(ChatColor.GREEN + players.get(getPrevIndex(i)).getName() + ChatColor.WHITE + "がTPしてきます。");
+            if (remainingTime <= 10) {
+                players.get(i).sendTitle("",
+                        "残り" + ChatColor.GOLD + remainingTime + ChatColor.WHITE + "秒で" + ChatColor.GREEN + players.get(getNextIndex(i)).getName() + ChatColor.WHITE + "にTPします。",
+                        0, 10, 0);
+            }
+            players.get(i).sendActionBar("次は" + ChatColor.GREEN + players.get(getPrevIndex(i)).getName() + ChatColor.WHITE + "がTPしてきます。");
         }
     }
 

@@ -19,11 +19,11 @@ public class SwapCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission("swapplugin.swap")) {
-            sender.sendMessage(ChatColor.RED + "権限がないお^^");
+            sender.sendMessage(ChatColor.RED + "権限がないっしゅ^～");
             return true;
         }
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "引数が間違ってるンゴね～^^");
+            sender.sendMessage(ChatColor.RED + "引数が間違ってるっしゅ^～");
             return true;
         }
 
@@ -35,14 +35,14 @@ public class SwapCommand implements CommandExecutor, TabCompleter {
             case "end":
                 return onEnd(sender, Arrays.copyOfRange(args, 1, args.length));
             default:
-                sender.sendMessage(ChatColor.RED + "引数が間違ってるンゴね～^^");
+                sender.sendMessage(ChatColor.RED + "引数が間違ってるっしゅ^～");
                 return true;
         }
     }
 
     private boolean onStart(CommandSender sender, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "引数が違うンゴね～^^  使用方法：/swap start <interval(数字)>");
+            sender.sendMessage(ChatColor.RED + "引数が違うっしゅ^～" + ChatColor.GREEN + "使用方法：/swap start <interval(数字)>");
             return true;
         }
         if (SwapPlugin.timer != null) {
@@ -55,14 +55,14 @@ public class SwapCommand implements CommandExecutor, TabCompleter {
         try {
             interval = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
-            sender.sendMessage(ChatColor.RED + "引数が違うンゴね～^^  使用方法：/swap start <interval(数字)>");
+            sender.sendMessage(ChatColor.RED + "引数が違うっしゅ^～" + ChatColor.GREEN + "使用方法：/swap start <interval(数字)>");
             return true;
         }
 
         Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(
                 ChatColor.GREEN + "==================================================\n" +
-                ChatColor.WHITE + "スワップカウントダウンが開始されました\n" +
-                ChatColor.GOLD + interval + ChatColor.WHITE + "秒後にスワップが実行されるンゴ～\n" +
+                ChatColor.WHITE + "スワップカウントダウンが開始されました。\n" +
+                ChatColor.GOLD + interval + ChatColor.WHITE + "秒後にスワップが実行されるっしゅ^～！\n" +
                 ChatColor.GREEN + "=================================================="
         ));
 
@@ -74,7 +74,7 @@ public class SwapCommand implements CommandExecutor, TabCompleter {
 
     private boolean onInterval(CommandSender sender, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "引数が違うンゴね～^^　使用方法：/swap interval <interval(数字)>");
+            sender.sendMessage(ChatColor.RED + "引数が違うっしゅ^～" + ChatColor.GREEN + "使用方法：/swap interval <interval(数字)>");
             return true;
         }
         if (SwapPlugin.timer == null) {
@@ -86,13 +86,13 @@ public class SwapCommand implements CommandExecutor, TabCompleter {
         try {
             interval = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
-            sender.sendMessage(ChatColor.RED + "引数が違うンゴね～^^　使用方法：/swap interval <interval(数字)>");
+            sender.sendMessage(ChatColor.RED + "引数が違うっしゅ^～" + ChatColor.GREEN + "使用方法：/swap interval <interval(数字)>");
             return true;
         }
 
         SwapPlugin.timer.setInterval(interval);
         Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(
-                ChatColor.WHITE + "スワップの間隔が" + ChatColor.GOLD + interval + ChatColor.WHITE + "秒に変更されました"));
+                ChatColor.WHITE + "スワップの間隔が" + ChatColor.GOLD + interval + ChatColor.WHITE + "秒に変更されたっしゅ^～"));
 
         return true;
     }
